@@ -9,7 +9,8 @@ const useBlob = !!process.env.BLOB_READ_WRITE_TOKEN;
 export async function fetchBriefHistory(days: number = 7): Promise<DailyBrief[]> {
   try {
     if (useBlob) {
-      const { blobs } = await list({ prefix: "govcon-briefs/", limit: 100 });
+      const token = process.env.BLOB_READ_WRITE_TOKEN;
+      const { blobs } = await list({ prefix: "govcon-briefs/", limit: 100, token });
       const datedBlobs = blobs
         .filter((b) => b.pathname.match(/govcon-briefs\/\d{4}-\d{2}-\d{2}\.json$/))
         .sort((a, b) => b.pathname.localeCompare(a.pathname))
@@ -17,7 +18,11 @@ export async function fetchBriefHistory(days: number = 7): Promise<DailyBrief[]>
 
       const briefs = await Promise.allSettled(
         datedBlobs.map(async (blob) => {
-          const res = await fetch(blob.downloadUrl);
+          const fetchUrl = blob.downloadUrl ?? blob.url;
+          const res = await fetch(fetchUrl, {
+            cache: "no-store",
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+          });
           if (!res.ok) return null;
           return res.json() as Promise<DailyBrief>;
         })

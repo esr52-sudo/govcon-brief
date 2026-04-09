@@ -12,6 +12,20 @@ function ensureLocalDir() {
   }
 }
 
+async function fetchBlob<T>(prefix: string): Promise<T | null> {
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  const { blobs } = await list({ prefix, token });
+  if (blobs.length === 0) return null;
+  const blob = blobs[0];
+  const fetchUrl = blob.downloadUrl ?? blob.url;
+  const res = await fetch(fetchUrl, {
+    cache: "no-store",
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) return null;
+  return (await res.json()) as T;
+}
+
 export async function writeBrief(brief: DailyBrief): Promise<void> {
   const dateKey = brief.date;
   const json = JSON.stringify(brief, null, 2);
@@ -39,11 +53,7 @@ export async function writeBrief(brief: DailyBrief): Promise<void> {
 export async function readLatestBrief(): Promise<DailyBrief | null> {
   try {
     if (useBlob) {
-      const { blobs } = await list({ prefix: "govcon-briefs/latest.json", limit: 1 });
-      if (blobs.length === 0) return null;
-      const res = await fetch(blobs[0].url);
-      if (!res.ok) return null;
-      return res.json() as Promise<DailyBrief>;
+      return fetchBlob<DailyBrief>("govcon-briefs/latest.json");
     } else {
       const filePath = join(LOCAL_DIR, "latest.json");
       if (!existsSync(filePath)) return null;
