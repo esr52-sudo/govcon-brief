@@ -18,7 +18,7 @@ export async function fetchSamOpportunities(): Promise<unknown[]> {
   url.searchParams.set("offset", "0");
 
   try {
-    const res = await fetch(url.toString(), { signal: AbortSignal.timeout(15000) });
+    const res = await fetch(url.toString(), { signal: AbortSignal.timeout(8000) });
     if (!res.ok) {
       console.error(`SAM.gov API error: ${res.status}`);
       return [];

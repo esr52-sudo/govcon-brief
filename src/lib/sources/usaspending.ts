@@ -38,7 +38,7 @@ export async function fetchUSASpendingAwards(): Promise<unknown[]> {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(8000),
       }
     );
     if (!res.ok) {

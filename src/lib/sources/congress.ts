@@ -12,7 +12,7 @@ export async function fetchCongressBills(): Promise<unknown[]> {
   try {
     const url = `https://api.congress.gov/v3/bill?fromDateTime=${fromDate}T00:00:00Z&sort=updateDate+desc&limit=30&api_key=${apiKey}`;
     const res = await fetch(url, {
-      signal: AbortSignal.timeout(15000),
+      signal: AbortSignal.timeout(8000),
       headers: { Accept: "application/json" },
     });
     if (!res.ok) {

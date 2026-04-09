@@ -15,7 +15,7 @@ export async function fetchGovConNews(): Promise<unknown[]> {
 
   try {
     const url = `https://newsapi.org/v2/everything?q=${query}&from=${fromDate}&sortBy=relevancy&pageSize=20&apiKey=${apiKey}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(15000) });
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
     if (!res.ok) {
       console.error(`NewsAPI error: ${res.status}`);
       return [];
