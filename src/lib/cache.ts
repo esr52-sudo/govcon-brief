@@ -19,12 +19,12 @@ export async function writeBrief(brief: DailyBrief): Promise<void> {
   if (useBlob) {
     await Promise.all([
       put(`govcon-briefs/${dateKey}.json`, json, {
-        access: "public",
+        access: "private",
         contentType: "application/json",
         addRandomSuffix: false,
       }),
       put(`govcon-briefs/latest.json`, json, {
-        access: "public",
+        access: "private",
         contentType: "application/json",
         addRandomSuffix: false,
       }),
