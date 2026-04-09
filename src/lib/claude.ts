@@ -50,6 +50,9 @@ Categories: AWARD|SOLICITATION|RECOMPETE|BUDGET|REGULATORY|MARKET. Keep summarie
     .map((block) => block.text)
     .join("");
 
-  const cleaned = text.replace(/^```json?\s*/, "").replace(/\s*```$/, "").trim();
-  return JSON.parse(cleaned) as DailyBrief;
+  // Extract JSON object robustly — find first { to last matching }
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start === -1 || end === -1) throw new Error("No JSON object found in response");
+  return JSON.parse(text.slice(start, end + 1)) as DailyBrief;
 }
