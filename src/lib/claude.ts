@@ -35,12 +35,12 @@ CONGRESS:${compact(sources.congress, 10)}
 FED REGISTER:${compact(sources.federalRegister, 10)}
 GOVCON NEWS:${compact(sources.news, 10)}${historyContext}
 
-Return JSON:{"date":"${today}","generatedAt":"<ISO>","bluf":"<2-3 sentences>","stories":[<8-12 items with id,headline,source,sourceUrl,sourceName,summary,significance(1-5),analysis,connections[],category(AWARD|SOLICITATION|RECOMPETE|BUDGET|REGULATORY|MARKET)>],"awards":[<top 5: agency,awardee,value(number),vehicle,sourceUrl>],"opportunities":[<top 5: agency,title,naicsCode,responseDate,setAside,sourceUrl>],"recompetes":[<expiring: agency,incumbent,estimatedValue,expirationDate,sourceUrl>],"budgetSignals":"<1 paragraph>","trends":"<2-3 sentences>","topStoryIds":["<2-3 ids>"]}
-Use real URLs from source data only. Return ONLY JSON, no markdown.`;
+Return JSON:{"date":"${today}","generatedAt":"<ISO>","bluf":"<2-3 sentences>","stories":[<5-7 items, each with: id,headline,source,sourceUrl,sourceName,summary(1 sentence),significance(1-5),analysis(1 sentence),connections[],category>],"awards":[<top 5: agency,awardee,value(number),vehicle,sourceUrl>],"opportunities":[<top 5: agency,title,naicsCode,responseDate,setAside,sourceUrl>],"recompetes":[<any expiring: agency,incumbent,estimatedValue,expirationDate,sourceUrl>],"budgetSignals":"<2-3 sentences>","trends":"<2-3 sentences>","topStoryIds":["<2-3 ids>"]}
+Categories: AWARD|SOLICITATION|RECOMPETE|BUDGET|REGULATORY|MARKET. Keep summaries and analysis concise (1 sentence each). Use real URLs only. Return ONLY valid JSON.`;
 
   const response = await anthropic.messages.create({
     model: "claude-haiku-4-5",
-    max_tokens: 4096,
+    max_tokens: 6000,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: userPrompt }],
   });
