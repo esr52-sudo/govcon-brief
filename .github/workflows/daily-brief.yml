@@ -1,0 +1,16 @@
+name: Daily GovCon Brief
+
+on:
+  schedule:
+    - cron: "0 10 * * *"
+  workflow_dispatch:
+
+jobs:
+  generate-brief:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger daily brief generation
+        run: |
+          curl -f -X GET "${{ secrets.DEPLOY_URL }}/api/cron" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            --max-time 120
