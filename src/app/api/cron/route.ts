@@ -21,26 +21,106 @@ export async function GET(request: Request) {
 
   try {
     const [sam, usaspending, fpds, agencies, congress, federalRegister, news, history] =
-      await Promise.allSettled([
-        fetchSamOpportunities(),
-        fetchUSASpendingAwards(),
-        fetchFPDS(),
-        fetchAgencyNews(),
-        fetchCongressBills(),
-        fetchFederalRegister(),
-        fetchGovConNews(),
-        fetchBriefHistory(7),
+      await Promise.all([
+        (async () => {
+          console.log("[cron] Fetching SAM.gov opportunities...");
+          try {
+            const result = await fetchSamOpportunities();
+            console.log(`[cron] SAM.gov fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] SAM.gov fetch failed:", err);
+            return [];
+          }
+        })(),
+        (async () => {
+          console.log("[cron] Fetching USASpending awards...");
+          try {
+            const result = await fetchUSASpendingAwards();
+            console.log(`[cron] USASpending fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] USASpending fetch failed:", err);
+            return [];
+          }
+        })(),
+        (async () => {
+          console.log("[cron] Fetching FPDS contracts...");
+          try {
+            const result = await fetchFPDS();
+            console.log(`[cron] FPDS fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] FPDS fetch failed:", err);
+            return [];
+          }
+        })(),
+        (async () => {
+          console.log("[cron] Fetching agency news...");
+          try {
+            const result = await fetchAgencyNews();
+            console.log(`[cron] Agency news fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] Agency news fetch failed:", err);
+            return [];
+          }
+        })(),
+        (async () => {
+          console.log("[cron] Fetching Congress bills...");
+          try {
+            const result = await fetchCongressBills();
+            console.log(`[cron] Congress bills fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] Congress bills fetch failed:", err);
+            return [];
+          }
+        })(),
+        (async () => {
+          console.log("[cron] Fetching Federal Register entries...");
+          try {
+            const result = await fetchFederalRegister();
+            console.log(`[cron] Federal Register fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] Federal Register fetch failed:", err);
+            return [];
+          }
+        })(),
+        (async () => {
+          console.log("[cron] Fetching GovCon news...");
+          try {
+            const result = await fetchGovConNews();
+            console.log(`[cron] GovCon news fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] GovCon news fetch failed:", err);
+            return [];
+          }
+        })(),
+        (async () => {
+          console.log("[cron] Fetching brief history...");
+          try {
+            const result = await fetchBriefHistory(7);
+            console.log(`[cron] Brief history fetch complete: ${result.length} items`);
+            return result;
+          } catch (err) {
+            console.error("[cron] Brief history fetch failed:", err);
+            return [];
+          }
+        })(),
       ]);
 
     const sources: SourceData = {
-      sam: sam.status === "fulfilled" ? sam.value : [],
-      usaspending: usaspending.status === "fulfilled" ? usaspending.value : [],
-      fpds: fpds.status === "fulfilled" ? fpds.value : [],
-      agencies: agencies.status === "fulfilled" ? agencies.value : [],
-      congress: congress.status === "fulfilled" ? congress.value : [],
-      federalRegister: federalRegister.status === "fulfilled" ? federalRegister.value : [],
-      news: news.status === "fulfilled" ? news.value : [],
-      history: history.status === "fulfilled" ? history.value : [],
+      sam,
+      usaspending,
+      fpds,
+      agencies,
+      congress,
+      federalRegister,
+      news,
+      history,
     };
 
     const brief = await synthesizeBrief(sources);
