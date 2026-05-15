@@ -36,11 +36,13 @@ export async function writeBrief(brief: DailyBrief): Promise<void> {
         access: "private",
         contentType: "application/json",
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
       put(`govcon-briefs/latest.json`, json, {
         access: "private",
         contentType: "application/json",
         addRandomSuffix: false,
+        allowOverwrite: true,
       }),
     ]);
   } else {
